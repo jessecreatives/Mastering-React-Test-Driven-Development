@@ -4,7 +4,7 @@
   "description": "Appointments system",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --output-path ./src/dist --output-filename main.js",
     "test": "jest"
   },
   "repository": {
