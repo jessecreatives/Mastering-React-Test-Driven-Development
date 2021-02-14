@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTestUtils from 'react-dom/test-utils';
 import { createContainer } from './domManipulators';
 import { AppointmentForm } from '../src/AppointmentForm';
+import { time } from 'faker';
 
 describe('AppointmentForm', () => {
   let render, container;
@@ -14,6 +15,7 @@ describe('AppointmentForm', () => {
   const field = name => form('appointment').elements[name];
   const labelFor = formElement =>
     container.querySelector(`label[for="${formElement}"]`);
+  const TimeSlotTable = () => container.querySelector('table#time-slots');
 
   const findOption = (dropdownNode, textContent) => {
     const options = Array.from(dropdownNode.childNodes);
@@ -114,7 +116,20 @@ describe('AppointmentForm', () => {
   describe('time slot table', () => {
       it('renders a table for time slots', () => {
           render(<AppointmentForm />);
-          expect(container.querySelector('table#time-slots')).not.toBeNull();
+          expect(TimeSlotTable()).not.toBeNull();
       });
+      it('renders a time slot for every half an hour between open and close times', () => {
+        render(<AppointmentForm salonOpensAt={9} salonClosesAt={11} />);
+        const timesOfDay = TimeSlotTable().querySelectorAll('tbody > * th');
+        expect(timesOfDay).toHaveLength(4);
+        expect(timesOfDay[0].textContent).toEqual('09:00');
+        expect(timesOfDay[1].textContent).toEqual('09:30');
+        expect(timesOfDay[3].textContent).toEqual('10:30');
+    });
+    it('renders an empty ell at start of header row', () => {
+      render(<AppointmentForm />);
+      const headerRow = TimeSlotTable().querySelector('thead > tr');
+      expect(headerRow.firstChild.textContent).toEqual('');
+    });
   });
 });
